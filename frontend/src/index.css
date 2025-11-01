@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-black;
+  }
+  
+  body {
+    @apply font-body bg-gray text-dark antialiased;
+    margin: 0;
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer components {
+  /* Neo-Brutalism Button Base */
+  .btn {
+    @apply px-6 py-3 border-3 border-black font-bold uppercase tracking-wide
+           transition-all duration-100 active:translate-y-1 cursor-pointer
+           inline-block text-center;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white shadow-brutal hover:shadow-brutal-sm;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-dark shadow-brutal hover:shadow-brutal-sm;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-dark shadow-brutal hover:shadow-brutal-sm;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent border-3 border-black text-dark hover:bg-dark hover:text-white;
+  }
+  
+  /* Neo-Brutalism Input */
+  .input-brutal {
+    @apply w-full px-4 py-3 border-3 border-black bg-white
+           focus:outline-none focus:shadow-brutal transition-all;
+  }
+  
+  /* Neo-Brutalism Card */
+  .card-brutal {
+    @apply border-3 border-black bg-white shadow-brutal p-6;
+  }
+  
+  /* Neo-Brutalism Container */
+  .container-brutal {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .text-shadow-brutal {
+    text-shadow: 3px 3px 0px rgba(0,0,0,1);
+  }
+  
+  .rotate-slight {
+    transform: rotate(-2deg);
+  }
+  
+  .rotate-slight-opposite {
+    transform: rotate(2deg);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-left: 3px solid #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border: 2px solid #000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF6B35;
+}
+
+/* Selection */
+::selection {
+  background: #FFD23F;
+  color: #1A1A1A;
+}
