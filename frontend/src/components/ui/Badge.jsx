@@ -8,16 +8,17 @@ export const Badge = ({
 }) => {
   const variantClasses = {
     primary: 'bg-primary text-white',
-    secondary: 'bg-secondary text-dark',
-    accent: 'bg-accent text-dark',
-    success: 'bg-success text-dark',
+    secondary: 'bg-secondary text-white',
+    accent: 'bg-accent text-white',
+    success: 'bg-success text-white',
     danger: 'bg-danger text-white',
-    dark: 'bg-dark text-white',
+    dark: 'bg-gray-900 text-white',
+    light: 'bg-gray-100 text-gray-900',
   };
   
   return (
     <span
-      className={`px-3 py-1 border-2 border-black text-xs font-bold uppercase inline-block ${variantClasses[variant]} ${className}`}
+      className={`badge ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {children}

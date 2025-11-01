@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from datetime import datetime
 
 
@@ -47,3 +47,9 @@ class UserInDB(UserBase):
     department: Optional[str] = None
     faculty_id: Optional[str] = None
     is_verified: bool = False
+    # Saved items
+    saved_papers: List[str] = Field(default_factory=list)
+    saved_questions: List[str] = Field(default_factory=list)
+    # Faculty verification
+    college_email: Optional[str] = None
+    id_card_url: Optional[str] = None

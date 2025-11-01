@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import Optional
 from app.models.paper import PaperCreate, PaperUpdate
 from app.controllers.paper_controller import (
@@ -9,15 +9,18 @@ from app.controllers.paper_controller import (
     delete_paper,
     get_faculty_papers
 )
+from app.utils.jwt import get_current_user, require_role
 
 router = APIRouter(prefix="/papers", tags=["Papers"])
 
 
-@router.post("/")
-async def create_paper_route(paper: PaperCreate):
+@router.post("/", dependencies=[Depends(require_role(["faculty"]))])
+async def create_paper_route(
+    paper: PaperCreate,
+    current_user: dict = Depends(get_current_user)
+):
     """Create a new paper (Faculty only)"""
-    # TODO: Add authentication and faculty verification
-    result = await create_paper(paper, "Faculty Name")
+    result = await create_paper(paper, current_user["username"])
     
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["message"])
@@ -64,10 +67,13 @@ async def get_paper(paper_id: str):
     return result
 
 
-@router.put("/{paper_id}")
-async def update_paper_route(paper_id: str, paper: PaperUpdate):
+@router.put("/{paper_id}", dependencies=[Depends(require_role(["faculty"]))])
+async def update_paper_route(
+    paper_id: str,
+    paper: PaperUpdate,
+    current_user: dict = Depends(get_current_user)
+):
     """Update a paper (Faculty only)"""
-    # TODO: Add authentication and verify faculty owns the paper
     result = await update_paper(paper_id, paper)
     
     if not result["success"]:
@@ -76,10 +82,12 @@ async def update_paper_route(paper_id: str, paper: PaperUpdate):
     return result
 
 
-@router.delete("/{paper_id}")
-async def delete_paper_route(paper_id: str):
+@router.delete("/{paper_id}", dependencies=[Depends(require_role(["faculty", "admin"]))])
+async def delete_paper_route(
+    paper_id: str,
+    current_user: dict = Depends(get_current_user)
+):
     """Delete a paper (Faculty/Admin only)"""
-    # TODO: Add authentication and authorization
     result = await delete_paper(paper_id)
     
     if not result["success"]:

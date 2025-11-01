@@ -1,6 +1,7 @@
 from passlib.context import CryptContext
 from app.config.database import get_database
 from app.models.user import UserRegister, UserLogin, UserResponse, UserInDB
+from app.utils.jwt import create_access_token
 from datetime import datetime
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -55,6 +56,16 @@ async def register_user(user_data: UserRegister):
     # Insert user
     result = await users_collection.insert_one(user_dict)
     
+    # Create JWT token
+    access_token = create_access_token(
+        data={
+            "sub": str(result.inserted_id),
+            "email": user_data.email,
+            "username": user_data.username,
+            "role": user_data.role
+        }
+    )
+    
     # Return user response
     user_response = {
         "id": str(result.inserted_id),
@@ -73,7 +84,12 @@ async def register_user(user_data: UserRegister):
     elif user_data.role == "faculty":
         user_response["department"] = user_data.department
     
-    return {"success": True, "message": "User registered successfully", "user": user_response}
+    return {
+        "success": True,
+        "message": "User registered successfully",
+        "user": user_response,
+        "token": access_token
+    }
 
 
 async def login_user(user_data: UserLogin):
@@ -89,6 +105,16 @@ async def login_user(user_data: UserLogin):
     # Verify password
     if not verify_password(user_data.password, user["hashed_password"]):
         return {"success": False, "message": "Invalid email or password"}
+    
+    # Create JWT token
+    access_token = create_access_token(
+        data={
+            "sub": str(user["_id"]),
+            "email": user["email"],
+            "username": user["username"],
+            "role": user.get("role", "student")
+        }
+    )
     
     # Return user response
     user_response = {
@@ -108,4 +134,9 @@ async def login_user(user_data: UserLogin):
     elif user.get("role") == "faculty":
         user_response["department"] = user.get("department")
     
-    return {"success": True, "message": "Login successful", "user": user_response}
+    return {
+        "success": True,
+        "message": "Login successful",
+        "user": user_response,
+        "token": access_token
+    }

@@ -10,7 +10,7 @@
   }
   
   body {
-    @apply font-body bg-gray text-dark antialiased;
+    @apply font-body bg-gray-50 text-gray-900 antialiased;
     margin: 0;
     min-height: 100vh;
   }
@@ -21,43 +21,49 @@
 }
 
 @layer components {
-  /* Neo-Brutalism Button Base */
+  /* Refined Neo-Brutalism Button */
   .btn {
-    @apply px-6 py-3 border-3 border-black font-bold uppercase tracking-wide
-           transition-all duration-100 active:translate-y-1 cursor-pointer
-           inline-block text-center;
+    @apply px-6 py-3 border-3 border-black font-bold tracking-wide
+           transition-all duration-150 active:translate-y-1 cursor-pointer
+           inline-block text-center rounded-sm uppercase text-sm;
   }
   
   .btn-primary {
-    @apply bg-primary text-white shadow-brutal hover:shadow-brutal-sm;
+    @apply bg-primary text-white shadow-brutal hover:shadow-brutal-sm hover:bg-primary-dark;
   }
   
   .btn-secondary {
-    @apply bg-secondary text-dark shadow-brutal hover:shadow-brutal-sm;
+    @apply bg-secondary text-white shadow-brutal hover:shadow-brutal-sm hover:bg-secondary-dark;
   }
   
   .btn-accent {
-    @apply bg-accent text-dark shadow-brutal hover:shadow-brutal-sm;
+    @apply bg-accent text-white shadow-brutal hover:shadow-brutal-sm hover:bg-accent-dark;
   }
   
   .btn-outline {
-    @apply bg-transparent border-3 border-black text-dark hover:bg-dark hover:text-white;
+    @apply bg-white border-3 border-black text-gray-900 shadow-brutal hover:shadow-brutal-sm hover:bg-gray-50;
   }
   
-  /* Neo-Brutalism Input */
+  /* Refined Input */
   .input-brutal {
-    @apply w-full px-4 py-3 border-3 border-black bg-white
-           focus:outline-none focus:shadow-brutal transition-all;
+    @apply w-full px-4 py-3 border-3 border-black bg-white rounded-sm
+           focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary 
+           transition-all placeholder:text-gray-400;
   }
   
-  /* Neo-Brutalism Card */
+  /* Refined Card */
   .card-brutal {
-    @apply border-3 border-black bg-white shadow-brutal p-6;
+    @apply border-3 border-black bg-white shadow-brutal p-6 rounded-sm;
   }
   
-  /* Neo-Brutalism Container */
+  /* Container */
   .container-brutal {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-black rounded-sm uppercase;
   }
 }
 
@@ -81,21 +87,21 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: #F9FAFB;
   border-left: 3px solid #000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1a1a1a;
+  background: #111827;
   border: 2px solid #000;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF6B35;
+  background: #6366F1;
 }
 
 /* Selection */
 ::selection {
-  background: #FFD23F;
-  color: #1A1A1A;
+  background: #F59E0B;
+  color: #FFFFFF;
 }
