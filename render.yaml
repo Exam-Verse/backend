@@ -1,0 +1,73 @@
+services:
+  # Backend API Service
+  - type: web
+    name: examverse-api
+    runtime: python
+    region: oregon
+    plan: starter
+    branch: main
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URL
+        sync: false
+      - key: DATABASE_NAME
+        value: examverse
+      - key: SECRET_KEY
+        generateValue: true
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: MAX_FILE_SIZE
+        value: 10485760
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: OCR_SPACE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+
+  # Frontend Static Site
+  - type: web
+    name: examverse-frontend
+    runtime: static
+    region: oregon
+    plan: starter
+    branch: main
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: examverse-api
+          envVarKey: RENDER_EXTERNAL_URL
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -111,3 +111,30 @@ async def root():
         "docs": "/docs",
         "redoc": "/redoc"
     }
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render monitoring"""
+    from app.config.database import get_database
+    
+    status = {
+        "status": "healthy",
+        "api": "operational",
+        "database": "unknown"
+    }
+    
+    try:
+        db = get_database()
+        if db is not None:
+            # Quick ping to verify connection
+            await db.command("ping")
+            status["database"] = "connected"
+        else:
+            status["database"] = "disconnected"
+            status["status"] = "degraded"
+    except Exception as e:
+        status["database"] = "error"
+        status["status"] = "degraded"
+    
+    return status
