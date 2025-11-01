@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes import auth_routes, paper_routes, question_routes
+from app.routes import video_routes
+from app.routes import user_routes, faculty_routes, admin_routes
 
 app = FastAPI(
     title="ExamVerse API",
@@ -17,6 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Create uploads directory if it doesn't exist
+uploads_dir = Path("uploads")
+uploads_dir.mkdir(exist_ok=True)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 @app.on_event("startup")
@@ -35,6 +46,10 @@ async def shutdown_event():
 app.include_router(auth_routes.router)
 app.include_router(paper_routes.router)
 app.include_router(question_routes.router)
+app.include_router(video_routes.router)
+app.include_router(user_routes.router)
+app.include_router(faculty_routes.router)
+app.include_router(admin_routes.router)
 
 
 @app.get("/")
@@ -49,10 +64,34 @@ async def root():
                 "register": "/auth/register",
                 "login": "/auth/login"
             },
+            "user": {
+                "profile_get": "/user/profile (GET)",
+                "profile_update": "/user/profile (PUT)",
+                "saved_papers": "/user/saved/papers",
+                "saved_questions": "/user/saved/questions",
+                "save_paper": "/user/saved/papers/{paper_id} (POST)",
+                "unsave_paper": "/user/saved/papers/{paper_id} (DELETE)",
+                "save_question": "/user/saved/questions/{question_id} (POST)",
+                "unsave_question": "/user/saved/questions/{question_id} (DELETE)"
+            },
+            "faculty": {
+                "dashboard": "/faculty/dashboard",
+                "my_papers": "/faculty/papers",
+                "paper_analytics": "/faculty/papers/{paper_id}/analytics"
+            },
+            "admin": {
+                "pending_faculty": "/admin/faculty/pending",
+                "approve_faculty": "/admin/faculty/{user_id}/approve",
+                "reject_faculty": "/admin/faculty/{user_id}/reject",
+                "reports": "/admin/reports",
+                "analytics": "/admin/analytics"
+            },
             "papers": {
                 "get_all": "/papers",
                 "get_by_id": "/papers/{id}",
                 "create": "/papers (POST)",
+                "upload": "/papers/upload (POST - multipart/form-data)",
+                "add_solution": "/papers/{id}/solution (POST)",
                 "faculty_papers": "/papers/faculty/{faculty_id}"
             },
             "questions": {
@@ -62,6 +101,11 @@ async def root():
                 "video_solutions": "/questions/{id}/videos",
                 "report": "/questions/{id}/report (POST)",
                 "vote": "/questions/{id}/vote/{up|down} (POST)"
+            },
+            "videos": {
+                "search": "/videos/search",
+                "topic": "/videos/topic",
+                "details": "/videos/{video_id}"
             }
         },
         "docs": "/docs",

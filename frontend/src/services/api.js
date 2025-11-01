@@ -59,11 +59,13 @@ export const paperAPI = {
 
 // Question APIs
 export const questionAPI = {
-  getByPaper: (paperId) => api.get(`/papers/${paperId}/questions`),
+  getByPaper: (paperId) => api.get(`/questions/paper/${paperId}`),
   getById: (id) => api.get(`/questions/${id}`),
   generateAISolution: (questionId) => api.post(`/questions/${questionId}/ai-solution`),
-  getVideoSolutions: (questionId) => api.get(`/questions/${questionId}/videos`),
+  getVideoSolutions: (questionId, refresh = false) => 
+    api.get(`/questions/${questionId}/videos`, { params: { refresh } }),
   reportIssue: (questionId, data) => api.post(`/questions/${questionId}/report`, data),
+  vote: (questionId, voteType) => api.post(`/questions/${questionId}/vote/${voteType}`),
 };
 
 // User APIs
@@ -92,4 +94,13 @@ export const adminAPI = {
   rejectFaculty: (facultyId, reason) => api.post(`/admin/faculty/${facultyId}/reject`, { reason }),
   getReports: () => api.get('/admin/reports'),
   getAnalytics: () => api.get('/admin/analytics'),
+};
+
+// Videos APIs (generic YouTube search via backend)
+export const videosAPI = {
+  search: (query, params = {}) =>
+    api.get('/videos/search', { params: { query, ...params } }),
+  byTopic: (topic, subject = '', params = {}) =>
+    api.get('/videos/topic', { params: { topic, subject, ...params } }),
+  details: (videoId) => api.get(`/videos/${videoId}`),
 };

@@ -9,6 +9,10 @@ import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/StudentDashboard';
+import PaperViewer from './pages/PaperViewer';
+import FacultyDashboard from './pages/FacultyDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import SavedItems from './pages/SavedItems';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -38,6 +42,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
             <Route path="/about" element={<About />} />
+            <Route path="/papers/:paperId" element={<PaperViewer />} />
             <Route path="/login" element={user ? <Navigate to={`/${user.role}/dashboard`} /> : <Login />} />
             <Route path="/register" element={user ? <Navigate to={`/${user.role}/dashboard`} /> : <Register />} />
             
@@ -50,16 +55,21 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/saved"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <SavedItems />
+                </ProtectedRoute>
+              }
+            />
             
             {/* Faculty Routes */}
             <Route
               path="/faculty/dashboard"
               element={
-                <ProtectedRoute allowedRoles={['faculty']}>
-                  <div className="container-brutal py-20">
-                    <h1 className="text-4xl font-bold">Faculty Dashboard</h1>
-                    <p className="mt-4">Faculty dashboard coming soon...</p>
-                  </div>
+                <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+                  <FacultyDashboard />
                 </ProtectedRoute>
               }
             />
@@ -69,10 +79,7 @@ function App() {
               path="/admin/dashboard"
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
-                  <div className="container-brutal py-20">
-                    <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-                    <p className="mt-4">Admin dashboard coming soon...</p>
-                  </div>
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />

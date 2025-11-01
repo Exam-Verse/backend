@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, UploadFile, File, Form
 from typing import Optional
 from app.models.paper import PaperCreate, PaperUpdate
 from app.controllers.paper_controller import (
@@ -7,7 +7,9 @@ from app.controllers.paper_controller import (
     get_paper_by_id,
     update_paper,
     delete_paper,
-    get_faculty_papers
+    get_faculty_papers,
+    upload_paper_with_pdf,
+    update_paper_solution
 )
 from app.utils.jwt import get_current_user, require_role
 
@@ -101,3 +103,51 @@ async def get_faculty_papers_route(faculty_id: str):
     """Get all papers by a faculty member"""
     result = await get_faculty_papers(faculty_id)
     return result
+
+
+@router.post("/upload", dependencies=[Depends(require_role(["faculty"]))])
+async def upload_paper_route(
+    file: UploadFile = File(...),
+    subject: str = Form(...),
+    college: str = Form(...),
+    course: str = Form(...),
+    semester: int = Form(...),
+    year: int = Form(...),
+    exam_type: str = Form(...),
+    extract_questions: bool = Form(True),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload paper PDF with automatic question extraction (Faculty only)"""
+    result = await upload_paper_with_pdf(
+        file=file,
+        subject=subject,
+        college=college,
+        course=course,
+        semester=semester,
+        year=year,
+        exam_type=exam_type,
+        faculty_id=current_user["user_id"],
+        faculty_name=current_user["username"],
+        extract_questions=extract_questions
+    )
+    
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+    
+    return result
+
+
+@router.post("/{paper_id}/solution", dependencies=[Depends(require_role(["faculty"]))])
+async def upload_solution_route(
+    paper_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload faculty solution for a paper (Faculty only)"""
+    result = await update_paper_solution(paper_id, file)
+    
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+    
+    return result
+

@@ -12,6 +12,7 @@
   "dependencies": {
     "autoprefixer": "^10.4.17",
     "axios": "^1.13.1",
+    "lucide-react": "^0.552.0",
     "postcss": "^8.4.35",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from app.models.question import QuestionCreate, ReportIssue
 from app.controllers.question_controller import (
     create_question,
@@ -54,9 +54,12 @@ async def generate_ai_solution_route(question_id: str):
 
 
 @router.get("/{question_id}/videos")
-async def get_video_solutions_route(question_id: str):
-    """Get video solutions for a question"""
-    result = await get_video_solutions(question_id)
+async def get_video_solutions_route(
+    question_id: str,
+    refresh: bool = Query(False, description="Force refresh video search")
+):
+    """Get video solutions for a question from YouTube"""
+    result = await get_video_solutions(question_id, force_refresh=refresh)
     
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["message"])
